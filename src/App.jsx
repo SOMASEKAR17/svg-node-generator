@@ -217,15 +217,8 @@ function App() {
     const node2 = floorData.nodes.find(n => n.nodeId === id2);
     if (!node1 || !node2) return;
 
-    // Calculate distance
-    // We need consistent units. 
-    // If percentage, distance is percentage 'units'. If pixels, pixels.
-    // Usually pixels are better for 'distance', but we store what we have.
-    // Let's calculate Euclidean distance based on the stored coordinates.
-    const dx = node2.coordinates.x - node1.coordinates.x;
-    const dy = node2.coordinates.y - node1.coordinates.y;
-    const dist = Math.sqrt(dx * dx + dy * dy);
-    const roundedDist = Math.round(dist * 100) / 100;
+    // Default distance is 0 as requested
+    const distance = 0;
 
     // Update both nodes
     setFloorData(prev => {
@@ -235,14 +228,14 @@ function App() {
           if (n.connections.some(c => c.nodeId === id2)) return n;
           return {
             ...n,
-            connections: [...n.connections, { nodeId: id2, distance: roundedDist }]
+            connections: [...n.connections, { nodeId: id2, distance }]
           };
         }
         if (n.nodeId === id2) {
           if (n.connections.some(c => c.nodeId === id1)) return n;
           return {
             ...n,
-            connections: [...n.connections, { nodeId: id1, distance: roundedDist }]
+            connections: [...n.connections, { nodeId: id1, distance }]
           };
         }
         return n;
