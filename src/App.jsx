@@ -111,7 +111,7 @@ function App() {
 
       // Inverted Y for bottom-left origin
       const finalX = rawX;
-      const finalY = imgHeight - rawY;
+      const finalY = rawY;
 
       if (usePercentage) {
         const px = (finalX / imgWidth) * 100;
@@ -148,9 +148,9 @@ function App() {
 
       if (rawX < 0 || rawX > imgWidth || rawY < 0 || rawY > imgHeight) return;
 
-      // Calculate bottom-left origin
+      // Calculate top-left origin
       const finalXBase = rawX;
-      const finalYBase = imgHeight - rawY;
+      const finalYBase = rawY;
 
       let finalX = finalXBase;
       let finalY = finalYBase;
@@ -252,7 +252,7 @@ function App() {
     // X = left, Y = bottom.
     return {
       left: usePercentage ? `${node.coordinates.x}%` : `${node.coordinates.x}px`,
-      bottom: usePercentage ? `${node.coordinates.y}%` : `${node.coordinates.y}px`,
+      top: usePercentage ? `${node.coordinates.y}%` : `${node.coordinates.y}px`,
       position: 'absolute'
     };
   };
@@ -273,17 +273,12 @@ function App() {
         const targetNode = floorData.nodes.find(n => n.nodeId === conn.nodeId);
         if (!targetNode) return;
 
-        // Coords are bottom-left based. SVG needs top-left.
-        // We need to invert Y for drawing.
-        // x stays x. y = 100 - y (if %) or height - y (if px, handled by SVG viewport?)
-        // Easiest is to set SVG coordinate system to 100x100 if % or widthxheight if px?
-        // Let's stick to % for SVG if using %.
-
+        // Coords are top-left based now.
         const x1 = node.coordinates.x;
-        const y1 = usePercentage ? (100 - node.coordinates.y) : (imageRef.current ? imageRef.current.offsetHeight - node.coordinates.y : 0);
+        const y1 = node.coordinates.y;
 
         const x2 = targetNode.coordinates.x;
-        const y2 = usePercentage ? (100 - targetNode.coordinates.y) : (imageRef.current ? imageRef.current.offsetHeight - targetNode.coordinates.y : 0);
+        const y2 = targetNode.coordinates.y;
 
         lines.push(
           <line
