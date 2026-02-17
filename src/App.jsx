@@ -321,7 +321,12 @@ function App() {
   const deleteNode = (id) => {
     setFloorData(prev => ({
       ...prev,
-      nodes: prev.nodes.filter(n => n.nodeId !== id)
+      nodes: prev.nodes
+        .filter(n => n.nodeId !== id)
+        .map(node => ({
+          ...node,
+          connections: node.connections.filter(c => c.nodeId !== id)
+        }))
     }));
     if (selectedNodeId === id) setSelectedNodeId(null);
   };
