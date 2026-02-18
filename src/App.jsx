@@ -7,7 +7,9 @@ import {
   MapPin,
   Network,
   MousePointer2,
-  Trash2
+  Trash2,
+  Sun,
+  Moon
 } from 'lucide-react';
 import './App.css';
 import { saveImageToDB, getImageFromDB, clearImageFromDB } from './db';
@@ -55,6 +57,21 @@ function App() {
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [connectionStartNodeId, setConnectionStartNodeId] = useState(null);
+
+  // Theme State
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem('floor_map_theme') || 'light';
+  });
+
+  // Apply Theme
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('floor_map_theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => prev === 'light' ? 'dark' : 'light');
+  };
 
   // SAVE STATE TO LOCAL STORAGE
   useEffect(() => {
@@ -427,6 +444,14 @@ function App() {
               style={{ color: '#cf6679', borderColor: 'rgba(207, 102, 121, 0.3)' }}
             >
               <Trash2 size={18} />
+            </button>
+            <div className="divider" />
+            <button
+              className="tool-btn"
+              onClick={toggleTheme}
+              title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} Mode`}
+            >
+              {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
             </button>
           </div>
 
