@@ -458,8 +458,9 @@ select:focus {
 }
 
 .projects-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 1.5rem;
 }
 
@@ -475,6 +476,8 @@ select:focus {
   flex-direction: column;
   justify-content: space-between;
   min-height: 160px;
+  width: 280px;
+  max-width: 350px;
 }
 
 .project-card:hover {
