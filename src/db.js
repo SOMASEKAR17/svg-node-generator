@@ -19,13 +19,13 @@ export const initDB = () => {
     });
 };
 
-export const saveImageToDB = async (imageData) => {
+export const saveImageToDB = async (imageData, key = 'currentImage') => {
     try {
         const db = await initDB();
         return new Promise((resolve, reject) => {
             const tx = db.transaction(STORE_NAME, 'readwrite');
             const store = tx.objectStore(STORE_NAME);
-            const request = store.put(imageData, 'currentImage');
+            const request = store.put(imageData, key);
 
             request.onsuccess = () => resolve(true);
             request.onerror = () => reject(request.error);
@@ -36,13 +36,13 @@ export const saveImageToDB = async (imageData) => {
     }
 };
 
-export const getImageFromDB = async () => {
+export const getImageFromDB = async (key = 'currentImage') => {
     try {
         const db = await initDB();
         return new Promise((resolve, reject) => {
             const tx = db.transaction(STORE_NAME, 'readonly');
             const store = tx.objectStore(STORE_NAME);
-            const request = store.get('currentImage');
+            const request = store.get(key);
 
             request.onsuccess = () => resolve(request.result);
             request.onerror = () => reject(request.error);
@@ -53,13 +53,13 @@ export const getImageFromDB = async () => {
     }
 };
 
-export const clearImageFromDB = async () => {
+export const clearImageFromDB = async (key = 'currentImage') => {
     try {
         const db = await initDB();
         return new Promise((resolve, reject) => {
             const tx = db.transaction(STORE_NAME, 'readwrite');
             const store = tx.objectStore(STORE_NAME);
-            const request = store.delete('currentImage');
+            const request = store.delete(key);
 
             request.onsuccess = () => resolve(true);
             request.onerror = () => reject(request.error);
@@ -69,3 +69,4 @@ export const clearImageFromDB = async () => {
         return false;
     }
 };
+
