@@ -10,6 +10,7 @@ import {
   Trash2
 } from 'lucide-react';
 import './App.css';
+import { saveImageToDB, getImageFromDB, clearImageFromDB } from './db';
 
 function App() {
   // LOAD STATE FROM LOCAL STORAGE OR USE DEFAULTS
@@ -23,9 +24,22 @@ function App() {
     };
   });
 
-  const [imageSrc, setImageSrc] = useState(() => {
-    return localStorage.getItem('floor_map_image') || null;
-  });
+  const [imageSrc, setImageSrc] = useState(null);
+
+  // Load image from IndexedDB on start
+  useEffect(() => {
+    const loadImage = async () => {
+      try {
+        const savedImage = await getImageFromDB();
+        if (savedImage) {
+          setImageSrc(savedImage);
+        }
+      } catch (err) {
+        console.error("Failed to load image from DB", err);
+      }
+    };
+    loadImage();
+  }, []);
 
   const [selectedNodeId, setSelectedNodeId] = useState(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -49,14 +63,9 @@ function App() {
 
   useEffect(() => {
     if (imageSrc) {
-      try {
-        localStorage.setItem('floor_map_image', imageSrc);
-      } catch (e) {
-        console.error("Image too large for local storage", e);
-        // Optional: Notify user
-      }
+      saveImageToDB(imageSrc);
     } else {
-      localStorage.removeItem('floor_map_image');
+      clearImageFromDB();
     }
   }, [imageSrc]);
 
@@ -67,7 +76,7 @@ function App() {
   const handleClearStorage = () => {
     if (window.confirm("Are you sure you want to clear all data? This cannot be undone.")) {
       localStorage.removeItem('floor_map_data');
-      localStorage.removeItem('floor_map_image');
+      clearImageFromDB();
       localStorage.removeItem('floor_map_transform');
 
       // Reset state
