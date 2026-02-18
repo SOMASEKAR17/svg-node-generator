@@ -17,7 +17,17 @@ import { saveImageToDB, getImageFromDB, clearImageFromDB } from './db';
 
 
 function Editor({ projectId, onBack, theme, toggleTheme }) {
-    // LOAD STATE FROM LOCAL STORAGE OR USE DEFAULTS
+    const [projectName, setProjectName] = useState("Untitled Project");
+
+    // Load Project Metadata
+    useEffect(() => {
+        const projects = JSON.parse(localStorage.getItem('floor_map_projects') || '[]');
+        const project = projects.find(p => p.id === projectId);
+        if (project) {
+            setProjectName(project.name);
+        }
+    }, [projectId]);
+
     const [floorData, setFloorData] = useState(() => {
         const saved = localStorage.getItem(`floor_map_data_${projectId}`);
         return saved ? JSON.parse(saved) : {
@@ -420,7 +430,10 @@ function Editor({ projectId, onBack, theme, toggleTheme }) {
                         <button className="tool-btn" onClick={onBack} title="Back to Dashboard">
                             <ArrowLeft size={18} />
                         </button>
-                        <h1>{floorData.name || "Untitled"}</h1>
+                        <div>
+                            <h1 style={{ margin: 0, fontSize: '1rem' }}>{projectName}</h1>
+                            <span style={{ fontSize: '0.8rem', color: 'var(--secondary-text)' }}>{floorData.name}</span>
+                        </div>
                     </div>
 
                     <div className="toolbar">
