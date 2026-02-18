@@ -269,7 +269,7 @@ function Editor({ projectId, onBack, theme, toggleTheme }) {
             const newNode = {
                 nodeId: uuidv4(),
                 name: `Node ${floorData.nodes.length + 1}`,
-                type: "room",
+                type: "hallway",
                 coordinates: {
                     x: finalX,
                     y: finalY,
@@ -613,7 +613,7 @@ function Editor({ projectId, onBack, theme, toggleTheme }) {
                                 onChange={e => updateNode(selectedNode.nodeId, 'type', e.target.value)}
                             >
                                 <option value="room">Room</option>
-                                <option value="corridor">Corridor</option>
+                                <option value="hallway">Hallway</option>
                                 <option value="door">Door</option>
                                 <option value="stairs">Stairs</option>
                                 <option value="elevator">Elevator</option>
