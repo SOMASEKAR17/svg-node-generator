@@ -6,31 +6,83 @@ import {
   Move,
   MapPin,
   Network,
-  MousePointer2
+  MousePointer2,
+  Trash2
 } from 'lucide-react';
 import './App.css';
 
 function App() {
-  const [floorData, setFloorData] = useState({
-    id: uuidv4(),
-    name: "Ground floor",
-    level: 0,
-    nodes: []
+  // LOAD STATE FROM LOCAL STORAGE OR USE DEFAULTS
+  const [floorData, setFloorData] = useState(() => {
+    const saved = localStorage.getItem('floor_map_data');
+    return saved ? JSON.parse(saved) : {
+      id: uuidv4(),
+      name: "Ground floor",
+      level: 0,
+      nodes: []
+    };
   });
 
-  const [imageSrc, setImageSrc] = useState(null);
+  const [imageSrc, setImageSrc] = useState(() => {
+    return localStorage.getItem('floor_map_image') || null;
+  });
+
   const [selectedNodeId, setSelectedNodeId] = useState(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [usePercentage, setUsePercentage] = useState(true);
 
   // Transform and Mode State
-  const [transform, setTransform] = useState({ x: 0, y: 0, scale: 1 });
+  const [transform, setTransform] = useState(() => {
+    const saved = localStorage.getItem('floor_map_transform');
+    return saved ? JSON.parse(saved) : { x: 0, y: 0, scale: 1 };
+  });
+
   const [mode, setMode] = useState('select'); // 'select', 'pan', 'node', 'connect'
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-
-  // Connection state
   const [connectionStartNodeId, setConnectionStartNodeId] = useState(null);
+
+  // SAVE STATE TO LOCAL STORAGE
+  useEffect(() => {
+    localStorage.setItem('floor_map_data', JSON.stringify(floorData));
+  }, [floorData]);
+
+  useEffect(() => {
+    if (imageSrc) {
+      try {
+        localStorage.setItem('floor_map_image', imageSrc);
+      } catch (e) {
+        console.error("Image too large for local storage", e);
+        // Optional: Notify user
+      }
+    } else {
+      localStorage.removeItem('floor_map_image');
+    }
+  }, [imageSrc]);
+
+  useEffect(() => {
+    localStorage.setItem('floor_map_transform', JSON.stringify(transform));
+  }, [transform]);
+
+  const handleClearStorage = () => {
+    if (window.confirm("Are you sure you want to clear all data? This cannot be undone.")) {
+      localStorage.removeItem('floor_map_data');
+      localStorage.removeItem('floor_map_image');
+      localStorage.removeItem('floor_map_transform');
+
+      // Reset state
+      setFloorData({
+        id: uuidv4(),
+        name: "Ground floor",
+        level: 0,
+        nodes: []
+      });
+      setImageSrc(null);
+      setTransform({ x: 0, y: 0, scale: 1 });
+      setSelectedNodeId(null);
+      setConnectionStartNodeId(null);
+    }
+  };
 
   const imageRef = useRef(null);
   const containerRef = useRef(null);
@@ -358,7 +410,15 @@ function App() {
             </button>
             <button className="tool-btn" onClick={() => setTransform(t => ({ ...t, scale: t.scale + 0.2 }))}><ZoomIn size={18} /></button>
             <button className="tool-btn" onClick={() => setTransform(t => ({ ...t, scale: Math.max(0.1, t.scale - 0.2) }))}><ZoomOut size={18} /></button>
-            <button className="tool-btn text-btn" onClick={() => setTransform({ x: 0, y: 0, scale: 1 })}>Reset</button>
+            <button className="tool-btn text-btn" onClick={() => setTransform({ x: 0, y: 0, scale: 1 })}>Reset View</button>
+            <button
+              className="tool-btn"
+              onClick={handleClearStorage}
+              title="Clear All Data (New Project)"
+              style={{ color: '#cf6679', borderColor: 'rgba(207, 102, 121, 0.3)' }}
+            >
+              <Trash2 size={18} />
+            </button>
           </div>
 
           <div className="flex-spacer"></div>
