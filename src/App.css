@@ -430,17 +430,16 @@ select:focus {
 }
 
 /* Dashboard Styles */
+/* Dashboard Styles */
 .dashboard-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
+  width: 100vw;
+  margin: 0;
   height: 100vh;
-  box-sizing: border-box;
-  overflow-y: auto;
 }
 
 .dashboard-header {
   margin-bottom: 2rem;
+  position: relative;
   text-align: center;
 }
 
@@ -459,8 +458,9 @@ select:focus {
 
 .projects-grid {
   display: flex;
+  width: 100vw;
+  padding-inline: 50px;
   flex-wrap: wrap;
-  justify-content: center;
   gap: 1.5rem;
 }
 
@@ -475,9 +475,10 @@ select:focus {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  width: 20vw;
   min-height: 160px;
-  width: 280px;
-  max-width: 350px;
+  /* Removed fixed width to allow grid to stretch cards */
+
 }
 
 .project-card:hover {
