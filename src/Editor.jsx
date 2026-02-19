@@ -268,7 +268,7 @@ function Editor({ projectId, onBack, theme, toggleTheme }) {
 
             const newNode = {
                 nodeId: uuidv4(),
-                name: `Node ${floorData.nodes.length + 1}`,
+                name: `Hallway ${floorData.nodes.length + 1}`,
                 type: "hallway",
                 coordinates: {
                     x: finalX,
